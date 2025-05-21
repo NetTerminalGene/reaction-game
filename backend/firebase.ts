@@ -1,8 +1,9 @@
 import admin from 'firebase-admin';
+import service_account  from './serviceAccountKey.json' 
 
 if (!admin.apps.length) {
   admin.initializeApp({
-    credential: admin.credential.applicationDefault(), 
+    credential: admin.credential.cert(service_account as admin.ServiceAccount), 
   });
 }
 

@@ -1,10 +1,10 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import { db } from './firebase'; // assumes firebase.ts exports Firestore instance
+import { db } from './firebase'; 
 
 const app = express();
 app.use(cors());
-app.use(express.json()); // 👈 REQUIRED for req.body to work
+app.use(express.json()); 
 
 
 app.post('/scores', async (req: Request, res: Response) => {
