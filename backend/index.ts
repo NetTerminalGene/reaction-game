@@ -34,11 +34,26 @@ app.get('/scores', async (_req: Request, res: Response) => {
     const snapshot = await db.collection('scores').orderBy('reactionTime').limit(10).get();
     const scores = snapshot.docs.map(doc => doc.data());
     res.json(scores);
-  } catch (err) {
-    console.error(err);
+  } catch (err: any) {
+    console.error('Firestore error:', err.message || err);
     res.status(500).json({ error: 'Failed to fetch scores' });
   }
 });
+
+/*app.get('/add-test-score', async(_req: Request, res: Response) => {
+  try{
+    await db.collection('scores').add({
+      name: 'Testing',
+      reactionTime: 333,
+      createdAt: new Date().toISOString(),
+    });
+    res.send('Test score added!');
+  } catch (err: any){
+    console.error('Add test error:', err.message || err);
+    res.status(500).send('Failed to add test score');
+  }
+});*/
+
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
