@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import { db } from './firebase'; 
+import { db } from '../firebase'; 
 
 const app = express();
 app.use(cors());
@@ -56,8 +56,7 @@ app.delete('/scores/test', async (_req: Request, res: Response) => {
   }
 });
 
-
-
-
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+
+export default app;
