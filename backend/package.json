@@ -2,8 +2,9 @@
   "name": "reaction-game",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "expo-router/entry",
   "scripts": {
+    "start": "expo start",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

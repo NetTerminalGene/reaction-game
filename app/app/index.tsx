@@ -1,11 +1,12 @@
 import React, { useState, useRef } from 'react';
-import { View, Text, Button, StyleSheet, Alert } from 'react-native';
-import axios from 'axios';
+import { View, Text, Button, StyleSheet, Alert, Pressable } from 'react-native';
+import { submitScore } from '../services/api';
+import { Link } from 'expo-router';
 
 export default function GameScreen() {
     const [status, setStatus] = useState<'idle' | 'waiting' | 'ready' | 'done'>('idle');
     const [reactionTime, setReactionTime] = useState<number | null>(null);
-    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const startTimeRef = useRef<number | null>(null);
 
     const startGame = () => {
@@ -35,18 +36,16 @@ export default function GameScreen() {
         setStatus('idle');
     };
 
-    const submitScore = async () => {
+    const handleSubmit = async () => {
         const name = prompt("Enter your name:");
         if (!name || !reactionTime) return;
 
         try {
-            await axios.post('http://localhost:3001/scores', {
-                name,
-                reactionTime,
-            });
-            Alert.alert('Submitted!', 'Your score was saved.');
+            await submitScore(name, reactionTime);
+            alert('Score submitted!');
         } catch (err) {
-            Alert.alert('Error', 'Could not submit score.');
+            console.error(err);
+            alert('Failed to submit score.');
         }
     };
 
@@ -56,8 +55,9 @@ export default function GameScreen() {
                 {status === 'idle' && 'Tap Start to begin'}
                 {status === 'waiting' && 'Wait for it...'}
                 {status === 'ready' && 'TAP!'}
-                {status === 'done' && `Your time: ${reactionTime} ms`}
+                {status === 'done' && `Your reaction time: ${reactionTime} ms`}
             </Text>
+
 
             <Button title={
                 status === 'idle' || status === 'done'? 'Start': status === 'ready' ? 'TAP!': 'Wait...'
@@ -75,9 +75,21 @@ export default function GameScreen() {
                 disabled={status === 'waiting'}
             />
 
+            <View style={{height: 20}}/>
 
             {status === 'done' && (
-                <Button title="Submit Score" onPress={submitScore} />
+                <>
+                <Button title="Submit Score" onPress={handleSubmit} />
+                
+                <Link href="/leaderboard" asChild>
+                <Pressable 
+                onPress={handlePress}
+                style={styles.leaderboardButton}>
+                    <Text style={styles.leaderboardButtonText}>VIEW LEADERBOARD</Text>
+                     
+                </Pressable>
+                </Link>
+                </>
             )}
         </View>
     );
@@ -86,4 +98,20 @@ export default function GameScreen() {
 const styles = StyleSheet.create({
     container: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 16 },
     statusText: { fontSize: 24, marginBottom: 20 },
+
+    leaderboardButton: {
+    marginTop: 20,
+    paddingVertical: 5,
+    paddingHorizontal: 24,
+    backgroundColor: '#0099FF',
+    borderRadius: 5,
+    alignItems: 'center',
+  },
+  leaderboardButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+  },
 });
+
+

@@ -11,7 +11,7 @@ app.post('/scores', async (req: Request, res: Response) => {
   const { name, reactionTime } = req.body;
 
   if (!name || !reactionTime) {
-    res.status(400).json({ error: 'Missing fields' });
+    res.status(400).send({ error: 'Missing fields' });
     return;
   }
 
@@ -22,10 +22,10 @@ app.post('/scores', async (req: Request, res: Response) => {
       createdAt: new Date().toISOString(),
     });
 
-    res.status(201).json({ message: 'Score saved!' });
+    res.status(201).send({ message: 'Score saved!' });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to save score' });
+    res.status(500).send({ error: 'Failed to save score' });
   }
 });
 
@@ -40,19 +40,23 @@ app.get('/scores', async (_req: Request, res: Response) => {
   }
 });
 
-/*app.get('/add-test-score', async(_req: Request, res: Response) => {
-  try{
-    await db.collection('scores').add({
-      name: 'Testing',
-      reactionTime: 333,
-      createdAt: new Date().toISOString(),
-    });
-    res.send('Test score added!');
-  } catch (err: any){
-    console.error('Add test error:', err.message || err);
-    res.status(500).send('Failed to add test score');
+app.delete('/scores/test', async (_req: Request, res: Response) => {
+  try {
+    const snapshot = await db.collection('scores')
+      .where('name', '==', 'Testing') 
+      .get();
+
+    const deletes = snapshot.docs.map(doc => doc.ref.delete());
+    await Promise.all(deletes);
+
+    res.send('Deleted all test scores');
+  } catch (err: any) {
+    console.error('Delete error:', err.message || err);
+    res.status(500).send('Failed to delete test scores');
   }
-});*/
+});
+
+
 
 
 const PORT = process.env.PORT || 3001;
