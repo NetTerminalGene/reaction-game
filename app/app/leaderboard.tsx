@@ -63,7 +63,7 @@ const handleClearLeaderboard = () => {
       />
       {scores.length === 0 && (
       <Text style={{color: 'gray', marginTop: 10}}>
-        No scores to clear.
+        No scores to clear yet; play ten rounds to see all scores.
         </Text> 
       )}
       
